@@ -47,9 +47,16 @@ export default class LambdaTestLauncher {
                     if (err) {
                         return reject(err);
                     }
-                    const tunnelName =  await this.lambdatestTunnelProcess.getTunnelName();
-                    
-                    resolve();
+                    this.lambdatestTunnelProcess.getTunnelName(tunnelName => {
+                        if (Array.isArray(capabilities)) {
+                            capabilities.forEach(capability => {
+                                capability.tunnelName = tunnelName;
+                            });
+                        } else if (typeof capabilities === "object") {
+                            capabilities.tunnelName = tunnelName;
+                        }
+                        resolve();
+                    });
                 });
             }),
             new Promise((resolve, reject) => {
